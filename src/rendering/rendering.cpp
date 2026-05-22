@@ -52,10 +52,20 @@ std::string generate_numbers(std::vector<float> cords, float scale, bool is_pair
 
 SDL_Texture* text_to_texture(SDL_Renderer* renderer, TTF_Font* font, const char* text){
   SDL_Color black = {0, 0, 0, 255};
-  SDL_Surface *text_surface = TTF_RenderText_Blended(font, text, black);
+  SDL_Surface *text_surface = TTF_RenderText_Blended_Wrapped(font, text, black, INPUT_WIDTH/2-INPUT_BOARDER);
   SDL_Texture *text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
   SDL_FreeSurface(text_surface);
   return text_texture;
+}
+
+void render_input_box(SDL_Renderer* renderer, TTF_Font* font, int lines_x=1, int lines_y=1) {
+  SDL_Rect input_box_x = {INPUT_DX_X_OFFSET, INPUT_DX_Y_OFFSET, INPUT_WIDTH,
+                          INPUT_HEIGHT*lines_x};
+  SDL_Rect input_box_y = {INPUT_DY_X_OFFSET, INPUT_DY_Y_OFFSET, INPUT_WIDTH,
+                          INPUT_HEIGHT*lines_y};
+  SDL_SetRenderDrawColor(renderer, 150, 150, 150, 180);
+  SDL_RenderFillRect(renderer, &input_box_x);
+  SDL_RenderFillRect(renderer, &input_box_y);
 }
 
 void render_curve(SDL_Renderer *renderer,std::vector<std::pair<float, float>> *curve, float scale) {
@@ -202,4 +212,31 @@ void render_scale(SDL_Renderer *renderer, SDL_Texture *line, float scale,
       render_scale_text(renderer, line_r, font, -i, scale, true, position_up, order);
     }
   }
+}
+
+void render_equation(SDL_Renderer *renderer, TTF_Font *font, std::string* equation_x, std::string* equation_y, int* lines_x, int* lines_y) {
+    std::string eq_x_str = "dx/dt=" + *equation_x;
+    std::string eq_y_str = "dy/dt=" + *equation_y;
+    const char* equation_x_c = eq_x_str.c_str();
+    const char* equation_y_c = eq_y_str.c_str();
+    SDL_Texture* text_x_texture = text_to_texture(renderer, font, equation_x_c);
+    SDL_Texture* text_y_texture = text_to_texture(renderer, font, equation_y_c);
+    SDL_Rect text_pos_x = {INPUT_DX_X_OFFSET, INPUT_DX_Y_OFFSET, 0, 0};
+    SDL_Rect text_pos_y = {INPUT_DY_X_OFFSET, INPUT_DY_Y_OFFSET, 0, 0};
+    SDL_QueryTexture(text_x_texture, NULL, NULL, &text_pos_x.w, &text_pos_x.h);
+    SDL_QueryTexture(text_y_texture, NULL, NULL, &text_pos_y.w, &text_pos_y.h);
+    text_pos_x.w *= INPUT_FONT_SCALE;
+    text_pos_x.h *= INPUT_FONT_SCALE;
+    text_pos_y.w *= INPUT_FONT_SCALE;
+    text_pos_y.h *= INPUT_FONT_SCALE;
+    int w_x,h_x,w_y,h_y;
+    TTF_SizeUTF8(font, equation_x_c, &w_x, &h_x);
+    TTF_SizeUTF8(font, equation_y_c, &w_y, &h_y);
+    *lines_x = w_x*2.2 / INPUT_WIDTH + 1;
+    *lines_y = w_y*2.2 / INPUT_WIDTH + 1;
+    render_input_box(renderer, font, *lines_x, *lines_y);
+    SDL_RenderCopy(renderer, text_x_texture, NULL, &text_pos_x);
+    SDL_RenderCopy(renderer, text_y_texture, NULL, &text_pos_y);
+    SDL_DestroyTexture(text_x_texture);
+    SDL_DestroyTexture(text_y_texture);
 }

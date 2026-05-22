@@ -5,8 +5,11 @@
 #include "font.h"
 #include "numeric.h"
 #include "config.h"
+#include "control.h"
+#include "input_eq.h"
 #include <vector>
 #include <utility>
+#include <string>
 
 int main() {
   SDL_Init(SDL_INIT_VIDEO);
@@ -31,7 +34,11 @@ int main() {
   line = IMG_LoadTexture(renderer, "../assests/rectangle.png");
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
+
   float scale = 100;
+  int lines_x = 1, lines_y = 1;
+  std::string input_x = "", input_y = "";
+  std::pair<bool, bool> choosen_equation = {false, false};
   bool running = true;
   bool is_generating = false;
   std::vector<std::pair<float, float>> curve;
@@ -52,13 +59,9 @@ int main() {
     render_codinats_info(renderer, scale, font);
     calc_curve(scale, &is_generating, &curve);
     render_curve(renderer, &curve, scale);
-
-    const uint8_t *keyboard_state = SDL_GetKeyboardState(NULL);
-    if (keyboard_state[SDL_SCANCODE_UP] == true) {
-      scale *= 1.01;
-    } else if (keyboard_state[SDL_SCANCODE_DOWN] == true) {
-      scale /= 1.01;
-    }
+    change_scale(&scale);
+    get_input(&choosen_equation, &input_x, &input_y, &is_generating, &lines_x, &lines_y);
+    render_equation(renderer, font, &input_x, &input_y, &lines_x, &lines_y);
 
     SDL_RenderCopy(renderer, cordinats, NULL, &phase_poitrat);
     SDL_RenderPresent(renderer);

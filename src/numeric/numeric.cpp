@@ -29,10 +29,12 @@ void calc_curve(float scale, bool *is_generating,
   int mouse_x, mouse_y;
   std::pair<float, float> cords;
   if (is_pressed_left(&mouse_x, &mouse_y)) {
-    *is_generating = true;
-    curve->clear();
-    cords = pos_to_cords(mouse_x, mouse_y, scale);
-    curve->push_back({cords.first, cords.second});
+    if (is_in_box(mouse_x, mouse_y)) {
+      *is_generating = true;
+      curve->clear();
+      cords = pos_to_cords(mouse_x, mouse_y, scale);
+      curve->push_back({cords.first, cords.second});
+    }
   } else if (*is_generating) {
     std::pair<float, float> last_cords = curve->back();
     std::pair<float, float> new_cords =
