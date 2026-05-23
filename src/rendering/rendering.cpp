@@ -1,4 +1,6 @@
+#include <SDL_video.h>
 #include <iomanip>
+#include <utility>
 #include <vector>
 #include "config.h"
 #include "cordinats.h"
@@ -68,16 +70,48 @@ void render_input_box(SDL_Renderer* renderer, TTF_Font* font, int lines_x=1, int
   SDL_RenderFillRect(renderer, &input_box_y);
 }
 
+void fill_gap_between_points(SDL_Renderer *renderer, std::pair<float, float>* last_point, std::pair<float, float> point, float scale) {
+  float delta_x_axis = point.first - last_point->first;
+  float delta_y_axis = point.second - last_point->second;
+  float delta = std::sqrt(std::pow(delta_x_axis, 2) +
+      std::pow(delta_y_axis, 2));
+
+  if (delta > MAX_POINT_DISTANCE*(WINDOW_W/scale)) {
+    std::pair<float, float> start_point = *last_point;
+    int how_many_times = (delta/(MAX_POINT_DISTANCE*(WINDOW_W/scale)));
+    float x_axis_diff = delta_x_axis/how_many_times;
+    float y_axis_diff = delta_y_axis/how_many_times;
+    for (int i = 0; i < how_many_times; i++) {
+      start_point.first += x_axis_diff;
+      start_point.second += y_axis_diff;
+      std::pair<float, float> pos = cords_to_pos(start_point.first, start_point.second, scale);
+      SDL_Rect point_rect = {int(pos.first) - POINT_WIDTH / 2,
+                            int(pos.second) - POINT_HEIGHT / 2, POINT_WIDTH,
+                            POINT_HEIGHT};
+      if (is_in_box(pos.first, pos.second)) {
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+        SDL_RenderFillRect(renderer, &point_rect);
+      }
+    }
+  }
+  *last_point = point;
+}
+
 void render_curve(SDL_Renderer *renderer,std::vector<std::pair<float, float>> *curve, float scale) {
-  for (auto point : *curve) {
-    std::pair<int, int> pos;
-    pos = cords_to_pos(point.first, point.second, scale);
-    SDL_Rect point_rect = {int(pos.first) - POINT_WIDTH / 2,
-                           int(pos.second) - POINT_HEIGHT / 2, POINT_WIDTH,
-                           POINT_HEIGHT};
-    if (is_in_box(pos.first, pos.second)) {
-      SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-      SDL_RenderFillRect(renderer, &point_rect);
+  std::pair<float, float> last_point;
+  if (!curve->empty()) {
+    last_point = *curve->begin();
+    for (auto point : *curve) {
+      std::pair<int, int> pos;
+      pos = cords_to_pos(point.first, point.second, scale);
+      SDL_Rect point_rect = {int(pos.first) - POINT_WIDTH / 2,
+                            int(pos.second) - POINT_HEIGHT / 2, POINT_WIDTH,
+                            POINT_HEIGHT};
+      if (is_in_box(pos.first, pos.second)) {
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+        SDL_RenderFillRect(renderer, &point_rect);
+        fill_gap_between_points(renderer, &last_point, point, scale);
+      }
     }
   }
 }

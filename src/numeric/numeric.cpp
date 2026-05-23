@@ -4,10 +4,20 @@
 #include <cmath>
 #include <utility>
 #include <vector>
+#include "exprtk.hpp"
+#include "parsing.h"
 
-float x_equation(float x, float y) { return y; }
+float x_equation(float x, float y) {
+  equations::x = x;
+  equations::y = y;
+  return equations::x_expr.value();
+ }
 
-float y_equation(float x, float y) { return -sin(x) - 0.2 * y; }
+float y_equation(float x, float y) {
+  equations::x = x;
+  equations::y = y;
+  return equations::y_expr.value();
+}
 
 std::pair<float, float> RK4(float x, float y) {
   float h = TIME_INTERVAL;

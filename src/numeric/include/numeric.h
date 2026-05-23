@@ -2,6 +2,7 @@
 #define __NUMERIC
 
 #include <vector>
+#include "parsing.h"
 
 
 void calc_curve(float scale, bool *is_generating,

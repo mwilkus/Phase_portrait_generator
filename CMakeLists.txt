@@ -14,11 +14,12 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/cordinats)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/numeric)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/rendering)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/input_eq)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/parser)
 
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 
 add_executable(${PROJECT_NAME} main.cpp)
 
-target_link_libraries(${PROJECT_NAME} rendering control input_eq numeric SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf)
+target_link_libraries(${PROJECT_NAME} rendering control input_eq numeric parser SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf)
 

@@ -5,7 +5,7 @@ add_library(numeric SHARED
     numeric.cpp
 )
 
-target_link_libraries(numeric PUBLIC cordinats control)
+target_link_libraries(numeric PUBLIC cordinats control parser)
 
 target_include_directories(numeric INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/include

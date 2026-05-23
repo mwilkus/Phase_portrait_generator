@@ -5,7 +5,12 @@ bool is_pressed_left(int* mouse_x, int* mouse_y){
     Uint32 mouse_state = SDL_GetMouseState(mouse_x, mouse_y);
     if (mouse_state & SDL_BUTTON(SDL_BUTTON_LEFT)) return true;
     else return false;
+}
 
+bool is_pressed_enter(){ 
+    const uint8_t *keyboard_state = SDL_GetKeyboardState(NULL);
+    if (keyboard_state[SDL_SCANCODE_RETURN] == true) return true;
+    else return false;
 }
 
 void change_scale(float* scale){

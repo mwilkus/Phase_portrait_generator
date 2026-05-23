@@ -49,4 +49,6 @@
 #define INPUT_FONT_SCALE 2
 #define INPUT_BOARDER 10
 
+#define MAX_POINT_DISTANCE 0.002
+
 #endif

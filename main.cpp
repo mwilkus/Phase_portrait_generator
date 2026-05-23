@@ -7,9 +7,11 @@
 #include "config.h"
 #include "control.h"
 #include "input_eq.h"
+#include "parsing.h"
 #include <vector>
 #include <utility>
 #include <string>
+
 
 int main() {
   SDL_Init(SDL_INIT_VIDEO);
@@ -34,14 +36,14 @@ int main() {
   line = IMG_LoadTexture(renderer, "../assests/rectangle.png");
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-
   float scale = 100;
   int lines_x = 1, lines_y = 1;
-  std::string input_x = "", input_y = "";
+  std::string input_x = "x", input_y = "y";
   std::pair<bool, bool> choosen_equation = {false, false};
   bool running = true;
   bool is_generating = false;
   std::vector<std::pair<float, float>> curve;
+  parse_input(&input_x, &input_y);
 
   while (running) {
     while (SDL_PollEvent(&e)) {
@@ -54,13 +56,15 @@ int main() {
     SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
     SDL_RenderFillRect(renderer, &phase_poitrat);
 
-    render_arrows(renderer, arrow, scale);
+    if (equations::valid) {
+      render_arrows(renderer, arrow, scale);
+    }
     render_scale(renderer, line, scale, font);
     render_codinats_info(renderer, scale, font);
     calc_curve(scale, &is_generating, &curve);
     render_curve(renderer, &curve, scale);
     change_scale(&scale);
-    get_input(&choosen_equation, &input_x, &input_y, &is_generating, &lines_x, &lines_y);
+    get_input(&choosen_equation, &input_x, &input_y, &is_generating, &lines_x, &lines_y, &curve);
     render_equation(renderer, font, &input_x, &input_y, &lines_x, &lines_y);
 
     SDL_RenderCopy(renderer, cordinats, NULL, &phase_poitrat);
