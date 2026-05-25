@@ -1,6 +1,8 @@
+#include "include/numeric.h"
 #include "config.h"
 #include "cordinats.h"
 #include "control.h"
+#include <climits>
 #include <cmath>
 #include <utility>
 #include <vector>
@@ -56,12 +58,13 @@ void calc_curve(float scale, bool *is_generating,
 std::vector<std::vector<int>> calculate_arrow_angle(float range) {
   std::vector<std::vector<int>> output;
   float x = -range / 2, y = range / 2;
+  float dx,dy;
   float diff = range / (AMMOUNT_OF_ARROWS - 1);
   for (int i = 0; i <= AMMOUNT_OF_ARROWS; i++) {
     std::vector<int> line;
     for (int j = 0; j <= AMMOUNT_OF_ARROWS; j++) {
-      float dy = y_equation(x, y);
-      float dx = x_equation(x, y);
+      dy = y_equation(x, y);
+      dx = x_equation(x, y);
       int angle = -(std::atan2(dy, dx) * 180.0 / M_PI);
       line.push_back(angle);
       x += diff;
@@ -69,6 +72,43 @@ std::vector<std::vector<int>> calculate_arrow_angle(float range) {
     y -= diff;
     x = -range / 2;
     output.push_back(line);
+  }
+  return output;
+}
+
+std::vector<std::vector<float>> calculate_arrow_color(float range) {
+  std::vector<std::vector<float>> output;
+  std::vector<float> magnitudes;
+  float x = -range / 2, y = range / 2;
+  float diff = range / (AMMOUNT_OF_ARROWS - 1);
+  for (int i = 0; i <= AMMOUNT_OF_ARROWS; i++) {
+    std::vector<float> line;
+    for (int j = 0; j <= AMMOUNT_OF_ARROWS; j++) {
+      if (std::abs(x)<range/1000) x = -range/1000;
+      if (std::abs(y)<range/1000) y = -range/1000;
+      float dy = y_equation(x, y);
+      float dx = x_equation(x, y);
+      float magnitude = std::sqrt(dx * dx + dy * dy);
+      line.push_back(magnitude);
+      magnitudes.push_back(magnitude);
+      x += diff;
+    }
+    y -= diff;
+    x = -range / 2;
+    output.push_back(line);
+  }
+  std::sort(magnitudes.begin(), magnitudes.end());
+  float mediana = magnitudes[magnitudes.size() / 2];
+  float min_magnitude = magnitudes[0];
+  for(auto &line : output) {
+    for(auto &magnitude : line) {
+      if (magnitude <= mediana){
+        magnitude = 250 - std::max(0,int(125 * (magnitude - min_magnitude) / (mediana - min_magnitude)));
+      }
+      else {
+        magnitude = 250 - std::min(250, int(125 + 125 * (magnitude - mediana) / (mediana - min_magnitude)));
+      }
+    }
   }
   return output;
 }

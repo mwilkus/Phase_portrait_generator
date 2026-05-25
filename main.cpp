@@ -51,9 +51,10 @@ int main() {
         running = false;
       }
     }
-    SDL_SetRenderDrawColor(renderer, 100, 200, 200, 255);
+    SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
     SDL_RenderClear(renderer);
-    SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+    SDL_SetRenderDrawColor(renderer, 170, 170, 170, 50);
+     SDL_RenderFillRect(renderer, &phase_poitrat);
     SDL_RenderFillRect(renderer, &phase_poitrat);
 
     if (equations::valid) {

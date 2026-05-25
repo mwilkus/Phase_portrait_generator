@@ -1,3 +1,4 @@
+#include <SDL_render.h>
 #include <SDL_video.h>
 #include <iomanip>
 #include <utility>
@@ -11,6 +12,36 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+
+std::vector<int> hsv_to_rgb(float H) {
+  float R,G,B;
+  float S=1, V=1;
+  int h = int(H / 60) % 6;
+  float f = H/60 - int(H/60);
+  float p = V*(1-S), q = V*(1-S*f), t = V*(1-S*(1-f));
+  switch (h) {
+  case 0:
+    R=V,G=t,B=p;
+    break;
+  case 1:
+    R=q,G=V,B=p;
+    break;
+  case 2:
+    R=p,G=V,B=t;
+    break;
+  case 3:
+    R=p,G=q,B=V;
+    break;
+  case 4:
+    R=t,G=p,B=V;
+    break;
+  case 5:
+    R=V,G=p,B=q;
+    break;
+  }
+  std::vector<int> rgb = {int(R*255), int(G*255), int(B*255)};
+  return rgb;
+}
 
 std::string generate_numbers(std::vector<float> cords, float scale, bool is_pair) {
   int order = std::ceil(std::log10(WINDOW_W / (2 * scale)));
@@ -146,15 +177,20 @@ void render_arrows(SDL_Renderer *renderer, SDL_Texture *arrow, float scale) {
   int x_index = 0, y_index = 0;
   std::vector<std::vector<int>> arrow_angles =
       calculate_arrow_angle(WINDOW_W / scale);
-  for (int j = Y_WINDOW_OFFSET - 8; j <= WINDOW_H + Y_WINDOW_OFFSET;
+  std::vector<std::vector<float>> arrow_colors =
+      calculate_arrow_color(WINDOW_W / scale);
+  for (int j = Y_WINDOW_OFFSET + Y_ARROW_RENDER_OFFSET; j <= WINDOW_H + Y_WINDOW_OFFSET;
        j += arrow_offset_h) {
-    for (int i = X_WINDOW_OFFSET; i <= WINDOW_W + X_WINDOW_OFFSET;
+    for (int i = X_WINDOW_OFFSET + X_ARROW_RENDER_OFFSET; i <= WINDOW_W + X_WINDOW_OFFSET;
          i += arrow_offset_w) {
       if (x_index >= BOARDER && x_index < AMMOUNT_OF_ARROWS - BOARDER &&
           y_index >= BOARDER && y_index < AMMOUNT_OF_ARROWS - BOARDER) {
         SDL_Rect arrow_pos = {i, j, ARROW_WIDTH, ARROW_HEIGHT};
         SDL_Point rot_axis = {0, ARROW_HEIGHT / 2};
         int angle = arrow_angles[y_index][x_index];
+        int color = arrow_colors[y_index][x_index];
+        std::vector<int> rgb = hsv_to_rgb(color);
+        SDL_SetTextureColorMod(arrow, rgb[0], rgb[1], rgb[2]);
         SDL_RenderCopyEx(renderer, arrow, NULL, &arrow_pos, angle, &rot_axis, SDL_FLIP_NONE);
       }
       x_index++;
