@@ -6,8 +6,8 @@
 #include <utility>
 #include "parsing.h"
 
-using eq = std::pair<exprtk::expression<float>, exprtk::expression<float>>;
+using eq = std::pair<exprtk::expression<double>, exprtk::expression<double>>;
 
-void get_input(std::pair<bool, bool>* choosen, std::string* input_x, std::string* input_y, bool* is_generating ,int* lines_x, int* lines_y, std::vector<std::pair<float, float>>* curve);
+void get_input(std::pair<bool, bool>* choosen, std::string* input_x, std::string* input_y, bool* is_generating ,int* lines_x, int* lines_y, std::vector<std::pair<double, double>>* curve);
 
 #endif

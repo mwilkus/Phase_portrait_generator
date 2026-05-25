@@ -10,7 +10,7 @@
 #include <vector>
 #include "parsing.h"
 
-using eq = std::pair<exprtk::expression<float>, exprtk::expression<float>>;
+using eq = std::pair<exprtk::expression<double>, exprtk::expression<double>>;
 
 std::pair<bool, bool> chose_input_box(std::pair<bool, bool>* choosen, int* lines_x, int* lines_y) {
   int mouse_x, mouse_y;
@@ -38,7 +38,7 @@ void input_logic(std::string* input, std::string* other, std::pair<bool, bool>* 
             if (e.type == SDL_QUIT) {
                 is_inputing = false;
             }
-            else if (e.type == SDL_TEXTINPUT) {
+            else if (e.type == SDL_TEXTINPUT && input->length() < MAX_INPUT_LENGTH) {
                 *input += e.text.text;
                 is_inputing = false;
             }
@@ -60,7 +60,7 @@ void input_logic(std::string* input, std::string* other, std::pair<bool, bool>* 
     SDL_StopTextInput();
 }
 
-void get_input(std::pair<bool, bool>* choosen, std::string* input_x, std::string* input_y, bool* is_generating, int* lines_x, int* lines_y, std::vector<std::pair<float, float>>* curve) {
+void get_input(std::pair<bool, bool>* choosen, std::string* input_x, std::string* input_y, bool* is_generating, int* lines_x, int* lines_y, std::vector<std::pair<double, double>>* curve) {
     *choosen = chose_input_box(choosen,lines_x,lines_y);
     if (choosen->first == true) {
         *is_generating = false;

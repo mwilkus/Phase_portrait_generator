@@ -7,6 +7,6 @@ add_library(numeric SHARED
 
 target_link_libraries(numeric PUBLIC cordinats control parser)
 
-target_include_directories(numeric INTERFACE
+target_include_directories(numeric PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )

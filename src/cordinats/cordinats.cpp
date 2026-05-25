@@ -28,8 +28,8 @@ bool is_in_input_box_dy(int x, int y, int lines) {
   return false;
 }
 
-std::pair<float, float> pos_to_cords(int x, int y, float scale) {
-  std::pair<float, float> cords;
+std::pair<double, double> pos_to_cords(int x, int y, double scale) {
+  std::pair<double, double> cords;
   cords.first =
       (x - (X_WINDOW_OFFSET + WINDOW_W / 2 + SCALE_LINE_X_X_OFFSET)) / scale;
   cords.second =
@@ -37,7 +37,7 @@ std::pair<float, float> pos_to_cords(int x, int y, float scale) {
   return cords;
 }
 
-std::pair<int, int> cords_to_pos(float x, float y, float scale) {
+std::pair<int, int> cords_to_pos(double x, double y, double scale) {
   std::pair<int, int> position;
   position.first =
       x * scale + X_WINDOW_OFFSET + WINDOW_W / 2 + SCALE_LINE_X_X_OFFSET;

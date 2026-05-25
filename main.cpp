@@ -36,13 +36,13 @@ int main() {
   line = IMG_LoadTexture(renderer, "../assests/rectangle.png");
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-  float scale = 100;
+  double scale = BASE_SCALE;
   int lines_x = 1, lines_y = 1;
   std::string input_x = "x", input_y = "y";
   std::pair<bool, bool> choosen_equation = {false, false};
   bool running = true;
   bool is_generating = false;
-  std::vector<std::pair<float, float>> curve;
+  std::vector<std::pair<double, double>> curve;
   parse_input(&input_x, &input_y);
 
   while (running) {
@@ -51,10 +51,10 @@ int main() {
         running = false;
       }
     }
-    SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
+    SDL_SetRenderDrawColor(renderer, 50, 50, 50, 100);
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, 170, 170, 170, 50);
-     SDL_RenderFillRect(renderer, &phase_poitrat);
+    SDL_RenderFillRect(renderer, &phase_poitrat);
     SDL_RenderFillRect(renderer, &phase_poitrat);
 
     if (equations::valid) {
@@ -67,7 +67,8 @@ int main() {
     change_scale(&scale);
     get_input(&choosen_equation, &input_x, &input_y, &is_generating, &lines_x, &lines_y, &curve);
     render_equation(renderer, font, &input_x, &input_y, &lines_x, &lines_y);
-
+    render_color_bar(renderer);
+    render_color_box_scale(renderer, line, font);
     SDL_RenderCopy(renderer, cordinats, NULL, &phase_poitrat);
     SDL_RenderPresent(renderer);
   }

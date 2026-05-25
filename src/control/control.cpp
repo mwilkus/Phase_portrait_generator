@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include <SDL_scancode.h>
 #include "config.h"
 
 bool is_pressed_left(int* mouse_x, int* mouse_y){ 
@@ -13,11 +14,14 @@ bool is_pressed_enter(){
     else return false;
 }
 
-void change_scale(float* scale){
+void change_scale(double* scale){
     const uint8_t *keyboard_state = SDL_GetKeyboardState(NULL);
     if (keyboard_state[SDL_SCANCODE_UP] == true) {
         *scale *= SCALE_CHANGE_RATE;
     } else if (keyboard_state[SDL_SCANCODE_DOWN] == true) {
         *scale /= SCALE_CHANGE_RATE;
+    }
+    else if (keyboard_state[SDL_SCANCODE_R] == true) {
+        *scale = BASE_SCALE;
     }
 }
