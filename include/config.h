@@ -76,4 +76,9 @@
 
 #define COLOR_BAR_SCALE_TEXT_HEIGHT 18
 
+#define TITLE_X_OFFSET 0
+#define TITLE_Y_OFFSET 650
+#define TITLE_WIDTH 700
+#define TITLE_HEIGHT 400
+
 #endif

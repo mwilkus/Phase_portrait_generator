@@ -26,7 +26,7 @@ int main() {
   SDL_RWops *rw = SDL_RWFromMem(Roboto_Black_ttf, Roboto_Black_ttf_len);
   TTF_Font *font = TTF_OpenFontRW(rw, 1, 14);
 
-  SDL_Texture *cordinats, *arrow, *line;
+  SDL_Texture *cordinats, *arrow, *line, *tittle;
   SDL_Event e;
   SDL_Rect phase_poitrat = {X_WINDOW_OFFSET + CORDINAT_X_OFFSET,
                             Y_WINDOW_OFFSET + CORDINAT_Y_OFFSET, WINDOW_W,
@@ -34,6 +34,7 @@ int main() {
   cordinats = IMG_LoadTexture(renderer, "../assests/cordinats.png");
   arrow = IMG_LoadTexture(renderer, "../assests/arrow.png");
   line = IMG_LoadTexture(renderer, "../assests/rectangle.png");
+  tittle = IMG_LoadTexture(renderer, "../assests/title.png");
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
   double scale = BASE_SCALE;
@@ -69,6 +70,7 @@ int main() {
     render_equation(renderer, font, &input_x, &input_y, &lines_x, &lines_y);
     render_color_bar(renderer);
     render_color_box_scale(renderer, line, font);
+    render_tittle(renderer, tittle);
     SDL_RenderCopy(renderer, cordinats, NULL, &phase_poitrat);
     SDL_RenderPresent(renderer);
   }

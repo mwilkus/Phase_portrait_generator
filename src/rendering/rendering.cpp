@@ -406,3 +406,9 @@ void render_color_box_scale(SDL_Renderer *renderer, SDL_Texture *line, TTF_Font 
     index++;
   }
 }
+
+void render_tittle(SDL_Renderer *renderer, SDL_Texture * title_texture) {
+  SDL_Rect tittle_rect = {TITLE_X_OFFSET, TITLE_Y_OFFSET,
+                           TITLE_WIDTH, TITLE_HEIGHT};
+  SDL_RenderCopy(renderer, title_texture, NULL, &tittle_rect);
+}

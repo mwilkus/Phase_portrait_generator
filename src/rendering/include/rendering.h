@@ -14,4 +14,6 @@ void render_scale(SDL_Renderer *renderer, SDL_Texture *line, double scale,TTF_Fo
 void render_equation(SDL_Renderer *renderer, TTF_Font *font, std::string* equation_x, std::string* equation_y, int* lines_x, int* lines_y);
 void render_color_bar(SDL_Renderer *renderer);
 void render_color_box_scale(SDL_Renderer *renderer, SDL_Texture *line, TTF_Font *font);
+void render_tittle(SDL_Renderer *renderer, SDL_Texture *title_texture);
+
 #endif
