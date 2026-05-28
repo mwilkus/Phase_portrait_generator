@@ -1,20 +1,20 @@
 #include "include/numeric.h"
 #include "config.h"
-#include "cordinats.h"
 #include "control.h"
+#include "cordinats.h"
+#include "exprtk.hpp"
+#include "numeric.h"
+#include "parsing.h"
 #include <climits>
 #include <cmath>
 #include <utility>
 #include <vector>
-#include "exprtk.hpp"
-#include "parsing.h"
-#include "numeric.h"
 
 double x_equation(double x, double y) {
   equations::x = x;
   equations::y = y;
   return equations::x_expr.value();
- }
+}
 
 double y_equation(double x, double y) {
   equations::x = x;
@@ -56,40 +56,42 @@ void calc_curve(double scale, bool *is_generating,
   }
 }
 
-std::vector<std::vector<int>> calculate_arrow_angle(double range) {
+void calculate_arrow_angle(double range) {
   std::vector<std::vector<int>> output;
   double x = -range / 2, y = range / 2;
-  double dx,dy;
+  double dx, dy;
   double diff = range / (AMMOUNT_OF_ARROWS - 2);
   bool x_axis_made = false;
   for (int i = 0; i <= AMMOUNT_OF_ARROWS; i++) {
     std::vector<int> line;
     bool y_axis_made = false;
-    if (std::abs(y)<range/1000 && !x_axis_made) y = range/2000;
+    if (std::abs(y) < range / 1000 && !x_axis_made)
+      y = range / 2000;
     for (int j = 0; j <= AMMOUNT_OF_ARROWS; j++) {
-      if (std::abs(x)<range/1000 && !y_axis_made) x = -range/2000;
+      if (std::abs(x) < range / 1000 && !y_axis_made)
+        x = -range / 2000;
       dy = y_equation(x, y);
       dx = x_equation(x, y);
       int angle = -(std::atan2(dy, dx) * 180.0 / M_PI);
       line.push_back(angle);
-      if (std::abs(x)<range/1000 && !y_axis_made) {
-        x = range/2000-diff;
+      if (std::abs(x) < range / 1000 && !y_axis_made) {
+        x = range / 2000 - diff;
         y_axis_made = true;
       }
       x += diff;
     }
-    if (std::abs(y)<range/1000 && !x_axis_made) {
-      y = -range/2000+diff;
+    if (std::abs(y) < range / 1000 && !x_axis_made) {
+      y = -range / 2000 + diff;
       x_axis_made = true;
     }
     y -= diff;
     x = -range / 2;
     output.push_back(line);
   }
-  return output;
+  simulation::arrow_angles = output;
 }
 
-std::vector<std::vector<double>> calculate_arrow_color(double range) {
+void calculate_arrow_color(double range) {
   std::vector<std::vector<double>> output;
   std::vector<double> magnitudes;
   double x = -range / 2, y = range / 2;
@@ -98,22 +100,24 @@ std::vector<std::vector<double>> calculate_arrow_color(double range) {
   for (int i = 0; i <= AMMOUNT_OF_ARROWS; i++) {
     std::vector<double> line;
     bool y_axis_made = false;
-    if (std::abs(y)<range/1000 && !x_axis_made) y = range/2000;
+    if (std::abs(y) < range / 1000 && !x_axis_made)
+      y = range / 2000;
     for (int j = 0; j <= AMMOUNT_OF_ARROWS; j++) {
-      if (std::abs(x)<range/1000 && !y_axis_made) x = -range/2000;
+      if (std::abs(x) < range / 1000 && !y_axis_made)
+        x = -range / 2000;
       double dy = y_equation(x, y);
       double dx = x_equation(x, y);
       double magnitude = std::sqrt(dx * dx + dy * dy);
       line.push_back(magnitude);
       magnitudes.push_back(magnitude);
-      if (std::abs(x)<range/1000 && !y_axis_made) {
-        x = range/2000-diff;
+      if (std::abs(x) < range / 1000 && !y_axis_made) {
+        x = range / 2000 - diff;
         y_axis_made = true;
       }
       x += diff;
     }
-    if (std::abs(y)<range/1000 && !x_axis_made) {
-      y = -range/2000+diff;
+    if (std::abs(y) < range / 1000 && !x_axis_made) {
+      y = -range / 2000 + diff;
       x_axis_made = true;
     }
     y -= diff;
@@ -123,16 +127,18 @@ std::vector<std::vector<double>> calculate_arrow_color(double range) {
   std::sort(magnitudes.begin(), magnitudes.end());
   values::mean = magnitudes[magnitudes.size() / 2];
   values::min = magnitudes[0];
-  values::max = 2*values::mean-values::min;
-  for(auto &line : output) {
-    for(auto &magnitude : line) {
-      if (magnitude <= values::mean){
-        magnitude = 250 - std::max(0,int(125 * (magnitude - values::min) / (values::mean - values::min)));
-      }
-      else {
-        magnitude = 250 - std::min(250, int(125 + 125 * (magnitude - values::mean) / (values::mean - values::min)));
+  values::max = 2 * values::mean - values::min;
+  for (auto &line : output) {
+    for (auto &magnitude : line) {
+      if (magnitude <= values::mean) {
+        magnitude = 250 - std::max(0, int(125 * (magnitude - values::min) /
+                                          (values::mean - values::min)));
+      } else {
+        magnitude =
+            250 - std::min(250, int(125 + 125 * (magnitude - values::mean) /
+                                              (values::mean - values::min)));
       }
     }
   }
-  return output;
+  simulation::arrow_colors = output;
 }

@@ -1,17 +1,16 @@
-#include <SDL_image.h>
-#include <SDL_ttf.h>
-#include <SDL.h>
-#include "rendering.h"
-#include "font.h"
-#include "numeric.h"
 #include "config.h"
 #include "control.h"
+#include "font.h"
 #include "input_eq.h"
+#include "numeric.h"
 #include "parsing.h"
-#include <vector>
-#include <utility>
+#include "rendering.h"
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <string>
-
+#include <utility>
+#include <vector>
 
 int main() {
   SDL_Init(SDL_INIT_VIDEO);
@@ -45,6 +44,7 @@ int main() {
   bool is_generating = false;
   std::vector<std::pair<double, double>> curve;
   parse_input(&input_x, &input_y);
+  bool is_changed = true;
 
   while (running) {
     while (SDL_PollEvent(&e)) {
@@ -59,15 +59,20 @@ int main() {
     SDL_RenderFillRect(renderer, &phase_poitrat);
 
     if (equations::valid) {
+      if (is_changed) {
+        calculate_arrow_angle(WINDOW_W / scale);
+        calculate_arrow_color(WINDOW_W / scale);
+      }
       render_arrows(renderer, arrow, scale);
     }
     render_scale(renderer, line, scale, font);
     render_codinats_info(renderer, scale, font);
     calc_curve(scale, &is_generating, &curve);
     render_curve(renderer, &curve, scale);
-    change_scale(&scale);
-    get_input(&choosen_equation, &input_x, &input_y, &is_generating, &lines_x, &lines_y, &curve);
-    render_equation(renderer, font, &input_x, &input_y, &lines_x, &lines_y);
+    is_changed = (change_scale(&scale) ||
+                  get_input(&choosen_equation, &input_x, &input_y,
+                            &is_generating, &lines_x, &lines_y, &curve));
+    render_equation(renderer, font, &input_x, &input_y, &lines_x, &lines_y, line);
     render_color_bar(renderer);
     render_color_box_scale(renderer, line, font);
     render_tittle(renderer, tittle);

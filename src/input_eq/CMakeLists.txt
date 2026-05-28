@@ -9,4 +9,4 @@ find_package(SDL2_ttf REQUIRED)
 
 target_link_libraries(input_eq PRIVATE control parser cordinats SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf)
 
-target_include_directories(input_eq INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(input_eq PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

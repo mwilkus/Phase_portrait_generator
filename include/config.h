@@ -81,4 +81,9 @@
 #define TITLE_WIDTH 700
 #define TITLE_HEIGHT 400
 
+#define CURSOR_HEIGHT 80
+#define CURSOR_WIDTH 4
+#define CURSOR_X_OFFSET -2
+#define CURSOR_Y_OFFSET -30
+
 #endif

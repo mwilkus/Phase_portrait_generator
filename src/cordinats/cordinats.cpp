@@ -14,7 +14,7 @@ bool is_in_box(int x, int y) {
 
 bool is_in_input_box_dx(int x, int y, int lines) {
   if (x > INPUT_DX_X_OFFSET && x < INPUT_DX_X_OFFSET + INPUT_WIDTH &&
-      y > INPUT_DX_Y_OFFSET && y < INPUT_DX_Y_OFFSET + INPUT_HEIGHT*lines) {
+      y > INPUT_DX_Y_OFFSET && y < INPUT_DX_Y_OFFSET + INPUT_HEIGHT * lines) {
     return true;
   }
   return false;
@@ -22,7 +22,7 @@ bool is_in_input_box_dx(int x, int y, int lines) {
 
 bool is_in_input_box_dy(int x, int y, int lines) {
   if (x > INPUT_DY_X_OFFSET && x < INPUT_DY_X_OFFSET + INPUT_WIDTH &&
-      y > INPUT_DY_Y_OFFSET && y < INPUT_DY_Y_OFFSET + INPUT_HEIGHT*lines) {
+      y > INPUT_DY_Y_OFFSET && y < INPUT_DY_Y_OFFSET + INPUT_HEIGHT * lines) {
     return true;
   }
   return false;

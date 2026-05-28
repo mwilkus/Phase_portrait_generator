@@ -1,5 +1,6 @@
 #include "config.h"
 #include "control.h"
+#include "input_eq.h"
 #include "cordinats.h"
 #include "numeric.h"
 #include <SDL.h>
@@ -9,12 +10,14 @@
 #include <SDL_ttf.h>
 #include <SDL_video.h>
 #include <cmath>
+#include <cstddef>
 #include <iomanip>
 #include <ios>
 #include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
+#include <iostream>
 
 std::vector<int> hsv_to_rgb(double H) {
   double R, G, B;
@@ -88,7 +91,7 @@ SDL_Texture *text_to_texture(SDL_Renderer *renderer, TTF_Font *font,
                              const char *text) {
   SDL_Color black = {0, 0, 0, 255};
   SDL_Surface *text_surface = TTF_RenderText_Blended_Wrapped(
-      font, text, black, INPUT_WIDTH / 2 - INPUT_BOARDER);
+      font, text, black, INPUT_WIDTH / 2 - INPUT_BOARDER );
   SDL_Texture *text_texture =
       SDL_CreateTextureFromSurface(renderer, text_surface);
   SDL_FreeSurface(text_surface);
@@ -186,10 +189,8 @@ void render_arrows(SDL_Renderer *renderer, SDL_Texture *arrow, double scale) {
   int arrow_offset_h = WINDOW_H / (AMMOUNT_OF_ARROWS - 2);
   int x_index = 0, y_index = 0;
   bool x_axis_made = false;
-  std::vector<std::vector<int>> arrow_angles =
-      calculate_arrow_angle(WINDOW_W / scale);
-  std::vector<std::vector<double>> arrow_colors =
-      calculate_arrow_color(WINDOW_W / scale);
+  std::vector<std::vector<int>> arrow_angles = simulation::arrow_angles;
+  std::vector<std::vector<double>> arrow_colors = simulation::arrow_colors;
   for (int j = Y_WINDOW_OFFSET + Y_ARROW_RENDER_OFFSET;
        j <= WINDOW_H + Y_WINDOW_OFFSET; j += arrow_offset_h) {
     bool y_axis_made = false;
@@ -313,9 +314,37 @@ void render_scale(SDL_Renderer *renderer, SDL_Texture *line, double scale,
   }
 }
 
+void render_cursor(SDL_Renderer *renderer, TTF_Font *font, SDL_Texture * line, std::string *equation_x, std::string *equation_y, int *lines_x, int *lines_y){
+  std::string before_cursor;
+  int w,h,base_h,dummy;
+  SDL_Rect cursor;
+  if (cursor_position::choosen.first) before_cursor = equation_x->substr(0,6+cursor_position::pos_x);  
+  else if (cursor_position::choosen.second) before_cursor = equation_y->substr(0,6+cursor_position::pos_y);
+  TTF_SizeUTF8(font, before_cursor.c_str(), &w, &h);
+  std::string current_line = "";
+  int count_of_lines = 0;
+  for (auto c : before_cursor){
+    std::string test_line = current_line + c;
+    int test_w;
+    TTF_SizeUTF8(font, test_line.c_str(), &test_w, &dummy);
+    if (test_w>(INPUT_WIDTH / 2 - INPUT_BOARDER)){
+      current_line=c;
+      count_of_lines++;
+    }
+    else current_line=test_line;
+  }
+  TTF_SizeUTF8(font, current_line.c_str(), &w, &dummy);
+  h*=count_of_lines;
+  h*=INPUT_FONT_SCALE;
+  w*=INPUT_FONT_SCALE;
+  if (cursor_position::choosen.first) cursor = {INPUT_DX_X_OFFSET+CURSOR_X_OFFSET+w, INPUT_DX_Y_OFFSET+h+CURSOR_Y_OFFSET, CURSOR_WIDTH, CURSOR_HEIGHT};
+  else if (cursor_position::choosen.second) cursor = {INPUT_DY_X_OFFSET+CURSOR_X_OFFSET+w, INPUT_DY_Y_OFFSET+h+CURSOR_Y_OFFSET, CURSOR_WIDTH, CURSOR_HEIGHT};
+  SDL_RenderCopy(renderer, line, NULL, &cursor);
+}
+
 void render_equation(SDL_Renderer *renderer, TTF_Font *font,
                      std::string *equation_x, std::string *equation_y,
-                     int *lines_x, int *lines_y) {
+                     int *lines_x, int *lines_y, SDL_Texture* line) {
   std::string eq_x_str = "dx/dt=" + *equation_x;
   std::string eq_y_str = "dy/dt=" + *equation_y;
   const char *equation_x_c = eq_x_str.c_str();
@@ -340,6 +369,7 @@ void render_equation(SDL_Renderer *renderer, TTF_Font *font,
   SDL_RenderCopy(renderer, text_y_texture, NULL, &text_pos_y);
   SDL_DestroyTexture(text_x_texture);
   SDL_DestroyTexture(text_y_texture);
+  render_cursor(renderer, font, line, &eq_x_str, &eq_y_str, lines_x, lines_y);
 }
 
 void render_color_bar(SDL_Renderer *renderer) {
