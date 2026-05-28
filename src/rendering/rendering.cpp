@@ -5,6 +5,7 @@
 #include "numeric.h"
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_pixels.h>
 #include <SDL_rect.h>
 #include <SDL_render.h>
 #include <SDL_ttf.h>
@@ -88,10 +89,9 @@ std::string generate_numbers(std::vector<double> cords, double scale,
 }
 
 SDL_Texture *text_to_texture(SDL_Renderer *renderer, TTF_Font *font,
-                             const char *text) {
-  SDL_Color black = {0, 0, 0, 255};
+                             const char *text, SDL_Color color={250,250,250,250}) {
   SDL_Surface *text_surface = TTF_RenderText_Blended_Wrapped(
-      font, text, black, INPUT_WIDTH / 2 - INPUT_BOARDER );
+      font, text, color, INPUT_WIDTH / 2 - INPUT_BOARDER );
   SDL_Texture *text_texture =
       SDL_CreateTextureFromSurface(renderer, text_surface);
   SDL_FreeSurface(text_surface);
@@ -204,6 +204,7 @@ void render_arrows(SDL_Renderer *renderer, SDL_Texture *arrow, double scale) {
         int color = arrow_colors[y_index][x_index];
         std::vector<int> rgb = hsv_to_rgb(color);
         SDL_SetTextureColorMod(arrow, rgb[0], rgb[1], rgb[2]);
+        SDL_SetTextureAlphaMod(arrow, ARROW_ALFA);
         SDL_RenderCopyEx(renderer, arrow, NULL, &arrow_pos, angle, &rot_axis,
                          SDL_FLIP_NONE);
       }
@@ -247,6 +248,7 @@ void render_scale_text(SDL_Renderer *renderer, SDL_Rect line, TTF_Font *font,
     }
     text_pos.w *= FONT_SCALE;
     text_pos.h *= FONT_SCALE;
+    SDL_SetTextureColorMod(text_texture, 200, 200, 200);
     SDL_RenderCopy(renderer, text_texture, NULL, &text_pos);
     SDL_DestroyTexture(text_texture);
   }
@@ -267,6 +269,7 @@ void render_scale(SDL_Renderer *renderer, SDL_Texture *line, double scale,
                        Y_WINDOW_OFFSET + WINDOW_H / 2 + SCALE_LINE_X_Y_OFFSET,
                        SCALE_LINE_X_WIDTH, SCALE_LINE_X_HEIGHT};
     if (line_r.x <= X_WINDOW_OFFSET + WINDOW_W - SCALE_BOARDER) {
+      SDL_SetTextureColorMod(line, 255,255, 255);
       SDL_RenderCopy(renderer, line, NULL, &line_r);
       render_scale_text(renderer, line_r, font, i, scale, false, position_up,
                         order);
@@ -281,6 +284,7 @@ void render_scale(SDL_Renderer *renderer, SDL_Texture *line, double scale,
                        Y_WINDOW_OFFSET + WINDOW_H / 2 + SCALE_LINE_X_Y_OFFSET,
                        SCALE_LINE_X_WIDTH, SCALE_LINE_X_HEIGHT};
     if (line_r.x >= X_WINDOW_OFFSET + SCALE_BOARDER) {
+      SDL_SetTextureColorMod(line, 255,255, 255);
       SDL_RenderCopy(renderer, line, NULL, &line_r);
       render_scale_text(renderer, line_r, font, i, scale, false, position_up,
                         order);
@@ -295,6 +299,7 @@ void render_scale(SDL_Renderer *renderer, SDL_Texture *line, double scale,
                            SCALE_LINE_Y_Y_OFFSET,
                        SCALE_LINE_Y_WIDTH, SCALE_LINE_Y_HEIGHT};
     if (line_r.y <= Y_WINDOW_OFFSET + WINDOW_H - SCALE_BOARDER) {
+      SDL_SetTextureColorMod(line, 255,255, 255);
       SDL_RenderCopy(renderer, line, NULL, &line_r);
       render_scale_text(renderer, line_r, font, -i, scale, true, position_up,
                         order);
@@ -307,6 +312,7 @@ void render_scale(SDL_Renderer *renderer, SDL_Texture *line, double scale,
                            SCALE_LINE_Y_Y_OFFSET,
                        SCALE_LINE_Y_WIDTH, SCALE_LINE_Y_HEIGHT};
     if (line_r.y >= Y_WINDOW_OFFSET + SCALE_BOARDER) {
+      SDL_SetTextureColorMod(line, 255,255, 255);
       SDL_RenderCopy(renderer, line, NULL, &line_r);
       render_scale_text(renderer, line_r, font, -i, scale, true, position_up,
                         order);
@@ -339,6 +345,7 @@ void render_cursor(SDL_Renderer *renderer, TTF_Font *font, SDL_Texture * line, s
   w*=INPUT_FONT_SCALE;
   if (cursor_position::choosen.first) cursor = {INPUT_DX_X_OFFSET+CURSOR_X_OFFSET+w, INPUT_DX_Y_OFFSET+h+CURSOR_Y_OFFSET, CURSOR_WIDTH, CURSOR_HEIGHT};
   else if (cursor_position::choosen.second) cursor = {INPUT_DY_X_OFFSET+CURSOR_X_OFFSET+w, INPUT_DY_Y_OFFSET+h+CURSOR_Y_OFFSET, CURSOR_WIDTH, CURSOR_HEIGHT};
+  SDL_SetTextureColorMod(line, 0,0, 0);
   SDL_RenderCopy(renderer, line, NULL, &cursor);
 }
 
@@ -349,8 +356,9 @@ void render_equation(SDL_Renderer *renderer, TTF_Font *font,
   std::string eq_y_str = "dy/dt=" + *equation_y;
   const char *equation_x_c = eq_x_str.c_str();
   const char *equation_y_c = eq_y_str.c_str();
-  SDL_Texture *text_x_texture = text_to_texture(renderer, font, equation_x_c);
-  SDL_Texture *text_y_texture = text_to_texture(renderer, font, equation_y_c);
+  SDL_Color black = {0,0,0,255};
+  SDL_Texture *text_x_texture = text_to_texture(renderer, font, equation_x_c, black);
+  SDL_Texture *text_y_texture = text_to_texture(renderer, font, equation_y_c, black);
   SDL_Rect text_pos_x = {INPUT_DX_X_OFFSET, INPUT_DX_Y_OFFSET, 0, 0};
   SDL_Rect text_pos_y = {INPUT_DY_X_OFFSET, INPUT_DY_Y_OFFSET, 0, 0};
   SDL_QueryTexture(text_x_texture, NULL, NULL, &text_pos_x.w, &text_pos_x.h);
@@ -381,7 +389,7 @@ void render_color_bar(SDL_Renderer *renderer) {
   for (int i = 0; i < COLOR_BAR_HEIGHT; i++) {
     double color_value = (double)i / COLOR_BAR_HEIGHT * 250;
     std::vector<int> rgb = hsv_to_rgb(color_value);
-    SDL_SetRenderDrawColor(renderer, rgb[0], rgb[1], rgb[2], 255);
+    SDL_SetRenderDrawColor(renderer, rgb[0], rgb[1], rgb[2], ARROW_ALFA);
     SDL_RenderDrawLine(renderer, COLOR_BAR_X_OFFSET, COLOR_BAR_Y_OFFSET + i,
                        COLOR_BAR_X_OFFSET + COLOR_BAR_WIDTH,
                        COLOR_BAR_Y_OFFSET + i);
@@ -429,7 +437,9 @@ void render_color_box_scale(SDL_Renderer *renderer, SDL_Texture *line, TTF_Font 
     }
     std::string text_str = stream.str();
     const char* text = text_str.c_str();
-    SDL_Texture* text_texture = text_to_texture(renderer, font, text);
+    SDL_Color black = {0,0,0,255};
+    SDL_Texture* text_texture = text_to_texture(renderer, font, text, black);
+    SDL_SetTextureColorMod(line, 0,0, 0);
     SDL_RenderCopy(renderer, line, NULL, &line_1);
     SDL_RenderCopy(renderer, line, NULL, &line_2);
     SDL_RenderCopy(renderer, text_texture, NULL, &text_rect);
@@ -441,4 +451,12 @@ void render_tittle(SDL_Renderer *renderer, SDL_Texture * title_texture) {
   SDL_Rect tittle_rect = {TITLE_X_OFFSET, TITLE_Y_OFFSET,
                            TITLE_WIDTH, TITLE_HEIGHT};
   SDL_RenderCopy(renderer, title_texture, NULL, &tittle_rect);
+}
+
+void render_background(SDL_Renderer *renderer, SDL_Rect phase_poitrat, SDL_Texture* backround){
+  SDL_Rect back = {0,0, WIDTH,HAIGHT};
+  SDL_RenderCopy(renderer, backround, NULL, &back);
+  SDL_SetRenderDrawColor(renderer, 15, 35, 50, 150);
+  SDL_RenderFillRect(renderer, &phase_poitrat);
+  SDL_RenderFillRect(renderer, &phase_poitrat);
 }

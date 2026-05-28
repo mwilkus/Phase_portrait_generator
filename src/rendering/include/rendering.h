@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+SDL_Texture *text_to_texture(SDL_Renderer *renderer, TTF_Font *font, const char *text, SDL_Color color={250,250,250,250});
 void render_input_box(SDL_Renderer *renderer, TTF_Font *font, int lines_x = 1,
                       int lines_y = 1);
 void render_curve(SDL_Renderer *renderer,
@@ -22,5 +23,6 @@ void render_color_bar(SDL_Renderer *renderer);
 void render_color_box_scale(SDL_Renderer *renderer, SDL_Texture *line,
                             TTF_Font *font);
 void render_tittle(SDL_Renderer *renderer, SDL_Texture *title_texture);
+void render_background(SDL_Renderer *renderer, SDL_Rect phase_poitrat, SDL_Texture* backround);
 
 #endif

@@ -1,6 +1,10 @@
 #ifndef __CONFIG
 #define __CONFIG
 
+#define WIDTH 1920
+#define HAIGHT 1080
+
+
 #define BASE_SCALE 100
 
 #define WINDOW_W 1000
@@ -9,6 +13,8 @@
 #define BOARDER 2
 #define X_WINDOW_OFFSET 850
 #define Y_WINDOW_OFFSET 40
+
+#define ARROW_ALFA 230
 
 #define ARROW_WIDTH 20
 #define ARROW_HEIGHT 16

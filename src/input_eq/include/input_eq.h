@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <string>
+#include <sys/types.h>
 #include <utility>
 
 using eq = std::pair<exprtk::expression<double>, exprtk::expression<double>>;
