@@ -3,6 +3,7 @@
 #include "cordinats.h"
 #include "parsing.h"
 #include "input_eq.h"
+#include "numeric.h"
 #include <SDL.h>
 #include <SDL_events.h>
 #include <SDL_render.h>
@@ -91,7 +92,7 @@ void input_logic(std::string *input, std::string *other,
 
 bool get_input(std::pair<bool, bool> *choosen, std::string *input_x,
                std::string *input_y, bool *is_generating, int *lines_x,
-               int *lines_y, std::vector<std::pair<double, double>> *curve) {
+               int *lines_y) {
   bool is_changed = false;
   *choosen = chose_input_box(choosen, lines_x, lines_y);
   if (choosen->first == true) {
@@ -105,7 +106,7 @@ bool get_input(std::pair<bool, bool> *choosen, std::string *input_x,
   }
   if (is_pressed_enter()) {
     parse_input(input_x, input_y);
-    curve->clear();
+    clear_curves();
     *is_generating = false;
     is_changed = true;
   }

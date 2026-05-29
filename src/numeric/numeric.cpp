@@ -10,6 +10,10 @@
 #include <utility>
 #include <vector>
 
+void clear_curves(){
+  simulation::curves.clear();
+}
+
 double x_equation(double x, double y) {
   equations::x = x;
   equations::y = y;
@@ -37,22 +41,28 @@ std::pair<double, double> RK4(double x, double y) {
   return {x, y};
 }
 
-void calc_curve(double scale, bool *is_generating,
-                std::vector<std::pair<double, double>> *curve) {
+void calc_curves(double scale, bool *is_generating) {
   int mouse_x, mouse_y;
   std::pair<double, double> cords;
   if (is_pressed_left(&mouse_x, &mouse_y)) {
     if (is_in_box(mouse_x, mouse_y)) {
+      if (!simulation::stil_pressed){
+        cords = pos_to_cords(mouse_x, mouse_y, scale);
+        simulation::curves[{cords.first, cords.second}].push_back({cords.first, cords.second});
+      }
+      simulation::stil_pressed=true;
       *is_generating = true;
-      curve->clear();
-      cords = pos_to_cords(mouse_x, mouse_y, scale);
-      curve->push_back({cords.first, cords.second});
     }
   } else if (*is_generating) {
-    std::pair<double, double> last_cords = curve->back();
-    std::pair<double, double> new_cords =
-        RK4(last_cords.first, last_cords.second);
-    curve->push_back(new_cords);
+    std::vector<std::pair<double, double>> last_cords, new_cords;
+    for (auto& el : simulation::curves){
+      last_cords.push_back(el.second.back());
+      new_cords.push_back(RK4(last_cords.back().first, last_cords.back().second));
+      el.second.push_back(new_cords.back());
+      simulation::stil_pressed=false;
+    }
+  } else{
+    simulation::stil_pressed=false;
   }
 }
 

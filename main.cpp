@@ -44,7 +44,6 @@ int main() {
   std::pair<bool, bool> choosen_equation = {false, false};
   bool running = true;
   bool is_generating = false;
-  std::vector<std::pair<double, double>> curve;
   parse_input(&input_x, &input_y);
   bool is_changed = true;
 
@@ -63,13 +62,13 @@ int main() {
       }
       render_arrows(renderer, arrow, scale);
     }
-    calc_curve(scale, &is_generating, &curve);
-    render_curve(renderer, &curve, scale);
+    calc_curves(scale, &is_generating);
+    render_curves(renderer, scale);
     render_scale(renderer, line, scale, font);
     render_codinats_info(renderer, scale, font);
     is_changed = (change_scale(&scale) ||
                   get_input(&choosen_equation, &input_x, &input_y,
-                            &is_generating, &lines_x, &lines_y, &curve));
+                            &is_generating, &lines_x, &lines_y));
     render_equation(renderer, font, &input_x, &input_y, &lines_x, &lines_y, line);
     render_color_bar(renderer);
     render_color_box_scale(renderer, line, font);
