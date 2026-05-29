@@ -4,12 +4,6 @@
 #include "cordinats.h"
 #include "numeric.h"
 #include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_pixels.h>
-#include <SDL_rect.h>
-#include <SDL_render.h>
-#include <SDL_ttf.h>
-#include <SDL_video.h>
 #include <cmath>
 #include <cstddef>
 #include <iomanip>
@@ -18,7 +12,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include <iostream>
 
 std::vector<int> hsv_to_rgb(double H) {
   double R, G, B;
@@ -79,6 +72,7 @@ std::string generate_numbers(std::vector<double> cords, double scale,
     double num = cords[0];
     if ((num < 1e4 && num > 1e-4) || (num > -1e4 && num < -1e-4) || num == 0) {
       int prec = std::max(0, -(order - 1));
+      if (num==0) prec =0;
       stream << std::fixed << std::setprecision(prec) << num;
     } else {
       stream << std::scientific << std::setprecision(1) << num;
@@ -428,11 +422,11 @@ void render_color_box_scale(SDL_Renderer *renderer, SDL_Texture *line, TTF_Font 
       value = values::min;
       break;
     }
-    if (value < 1e3 && value > 1e-3) {
+    if (value < 1e3 && value > 1e-1) {
       if (index!=0) stream << std::fixed << std::setprecision(2) << value;
       else stream << std::fixed << std::setprecision(2) << "> " << value;
     } else {
-      if (index!=0) stream << std::fixed << std::setprecision(2) << value;
+      if (index!=0) stream << std::scientific << std::setprecision(2) << value;
       else stream << std::scientific << std::setprecision(2) << "> " << value;
     }
     std::string text_str = stream.str();
