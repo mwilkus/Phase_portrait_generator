@@ -6,7 +6,8 @@
 #include <map>
 
 void clear_curves();
-
+double x_equation(double x, double y); 
+double y_equation(double x, double y);
 void calc_curves(double scale, bool *is_generating);
 
 void calculate_arrow_angle(double range);

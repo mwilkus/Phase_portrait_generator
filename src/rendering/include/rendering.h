@@ -11,7 +11,7 @@ SDL_Texture *text_to_texture(SDL_Renderer *renderer, TTF_Font *font, const char 
 void render_input_box(SDL_Renderer *renderer, TTF_Font *font, int lines_x = 1,
                       int lines_y = 1);
 void render_curves(SDL_Renderer *renderer, double scale);
-void render_codinats_info(SDL_Renderer *renderer, double scale, TTF_Font *font);
+void render_info(SDL_Renderer *renderer, double scale, TTF_Font *font);
 void render_arrows(SDL_Renderer *renderer, SDL_Texture *arrow, double scale);
 void render_scale(SDL_Renderer *renderer, SDL_Texture *line, double scale,
                   TTF_Font *font);

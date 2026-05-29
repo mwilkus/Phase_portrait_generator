@@ -58,7 +58,8 @@ void calc_curves(double scale, bool *is_generating) {
     for (auto& el : simulation::curves){
       last_cords.push_back(el.second.back());
       new_cords.push_back(RK4(last_cords.back().first, last_cords.back().second));
-      el.second.push_back(new_cords.back());
+      std::pair<int, int> pos = cords_to_pos(new_cords.back().first, new_cords.back().second, scale);
+      if(is_in_box(pos.first, pos.second)) el.second.push_back(new_cords.back());
       simulation::stil_pressed=false;
     }
   } else{

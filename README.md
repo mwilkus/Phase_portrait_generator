@@ -44,6 +44,8 @@ Confirm the entered equations with Enter.
 You can zoom in and out using the arrow keys.
 You can restart the scale by clicking R.
 You can click LMB to show a simulated trajectory from the clicked point.
+You can click RMB to show a value of the root of sum of squares of the derivatives (which is also shown in the color bar).
+You can remove simulated trajectories by clicking enter.
 
 ## Caution!
 Note that with large derivative values ​​the program will show approximate or completely wrong results due to numerical errors.

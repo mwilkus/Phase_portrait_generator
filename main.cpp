@@ -65,7 +65,7 @@ int main() {
     calc_curves(scale, &is_generating);
     render_curves(renderer, scale);
     render_scale(renderer, line, scale, font);
-    render_codinats_info(renderer, scale, font);
+    render_info(renderer, scale, font);
     is_changed = (change_scale(&scale) ||
                   get_input(&choosen_equation, &input_x, &input_y,
                             &is_generating, &lines_x, &lines_y));

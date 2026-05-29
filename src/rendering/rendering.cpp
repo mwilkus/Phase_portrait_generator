@@ -155,7 +155,7 @@ void render_curves(SDL_Renderer *renderer, double scale) {
   }
 }
 
-void render_codinats_info(SDL_Renderer *renderer, double scale,
+void render_info(SDL_Renderer *renderer, double scale,
                           TTF_Font *font) {
   int mouse_x, mouse_y;
 
@@ -172,9 +172,23 @@ void render_codinats_info(SDL_Renderer *renderer, double scale,
     SDL_SetRenderDrawColor(renderer, 100, 100, 100, 100);
     SDL_RenderFillRect(renderer, &cords_info);
     std::vector<double> cords_vact = {x, y};
-    std::string cords_str = generate_numbers(cords_vact, scale, true);
-    const char *cords_c = cords_str.c_str();
-    SDL_Texture *text_texture = text_to_texture(renderer, font, cords_c);
+    std::string text_str;
+    const char *text_c;
+    if (!is_pressed_right(NULL, NULL)){
+      text_str = generate_numbers(cords_vact, scale, true);
+      text_c = text_str.c_str();
+    }
+    else{
+      double dx = x_equation(x,y);
+      double dy = y_equation(x,y);
+      double magnitudo = {std::sqrt(dx*dx + dy*dy)};
+      std::stringstream stream;
+      if (magnitudo>1e3 || magnitudo<2e-2) stream << std::scientific << std::setprecision(3) << magnitudo;
+      else stream << std::fixed << std::setprecision(3) << magnitudo;
+      std::string text_str = stream.str();
+      text_c = text_str.c_str();
+    }
+    SDL_Texture *text_texture = text_to_texture(renderer, font, text_c);
     SDL_RenderCopy(renderer, text_texture, NULL, &cords_info);
     SDL_DestroyTexture(text_texture);
   }
